@@ -133,4 +133,5 @@ class ControlMap:
         self.Controller = {}
 
         self.Controller['xbox'] = {'Id': 0, 'Type': 'xbox', 'jobType': 'main'}
+
         self.Controller['board'] = {'Id': 1, 'Type': 'custom', 'jobType:': 'side'}

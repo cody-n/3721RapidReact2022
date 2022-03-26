@@ -46,6 +46,7 @@ class Creator:
                     motr.follow(MotorSpec['masterPort'])
             else:
                 print("IDK UR motor")
+            return motr
 
     def createPWMMotor(self, MotorSpec):
         if MotorSpec['Type'] == 'VictorSP':
@@ -68,6 +69,7 @@ class Creator:
             piston = Solenoid(pistonSpec['portA'])
         else:
             print("IDK UR piston bozo")
+        return piston
 
     def createControllers(self, ConSpec):
         con = None
@@ -80,6 +82,17 @@ class Creator:
                 con = Joystick(ConSpec['Id'])
             else:
                 print("IDK UR Controller Bozo")
+
+        elif ConSpec['jobType'] == 'side':
+            if ConSpec['Type'] == 'xbox':
+                con = XboxController(ConSpec['Id'])
+            elif ConSpec['Type'] == 'xtreme':
+                con = Joystick(ConSpec['Id'])
+            elif ConSpec['Type'] == 'custom':
+                con = Joystick(ConSpec['Id'])
+            else:
+                print("IDK ur Controller Bozo")
+
         else:
             print("IDK UR Controller Bozo")
 

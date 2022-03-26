@@ -19,7 +19,7 @@ class compRobot(commands2.TimedCommandRobot):
 
         # Initialize utility and subsystem classes
         self.Creator = Creator
-        self.botMap = RobotMap(self)
+        self.RobotMap = RobotMap(self)
         self.oi = OI(self)
         self.drive = Drive(self)
         self.chooser = wpilib.SendableChooser()
@@ -28,6 +28,7 @@ class compRobot(commands2.TimedCommandRobot):
         self.teleop = TeleOp(self)
 
     def getAutonomousCommand(self) -> commands2.Command:
+        # return chosen auto from chooser
         return self.chooser.getSelected()
 
     def disabledInit(self) ->  None:

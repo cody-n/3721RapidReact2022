@@ -17,7 +17,7 @@ class Drive(SubsystemBase):
         motors = {}
         pistons = {}
 
-        self.map = self.robot.botMap
+        self.map = self.robot.RobotMap
         self.rEnc = Encoder(0, 1, False, Encoder.EncodingType.k4X)
         self.lEnc = Encoder(2, 3, False, Encoder.EncodingType.k4X)
         self.Gyro = ADXRS450_Gyro
@@ -25,18 +25,18 @@ class Drive(SubsystemBase):
         for name in self.map.motorMap.motors:
             motors[name] = self.robot.Creator.createMotor(self.map.motorMap.motors[name])
 
-        for name in self.robot.botMap.PneumaticMap.pistons:
+        for name in self.robot.RobotMap.PneumaticMap.pistons:
             if name == 'dShifter':
-                pistons[name] = self.robot.Creator.createPistons(self.robot.botMap.PneumaticMap.pistons[name])
+                pistons[name] = self.robot.Creator.createPistons(self.robot.RobotMap.PneumaticMap.pistons[name])
         self.driveMotors = motors
         self.dPistons = pistons
 
         for name in self.driveMotors:
-            self.driveMotors[name].setInverted(self.robot.botMap.motorMap.motors[name]['inverted'])
+            self.driveMotors[name].setInverted(self.robot.RobotMap.motorMap.motors[name]['inverted'])
             self.driveMotors[name].setNeutralMode(ctre.NeutralMode.Coast)
             if self.map.motorMap.motors[name]['CurLimit'] is True:
                 self.driveMotors[name].configStatorCurrentLimit(self.robot.Creator.CreateCurrentConfig(
-                    self.robot.botMap.currentConfig['Drive']), 40)
+                    self.robot.RobotMap.currentConfig['Drive']), 40)
 
         self.kP = 0.0
         self.kI = 0.0
