@@ -1,42 +1,33 @@
 import ctre
 import wpilib
+from ctre import TalonFX
 from wpilib import DoubleSolenoid
+from wpilib import PneumaticsModuleType
 from commands2 import SubsystemBase
 from wpilib import Encoder
 from wpilib import ADXRS450_Gyro
 from utilities.PID import PID
+from constants import *
 
 
 class Drive(SubsystemBase):
-    def __init__(self, robot):
-
+    def __init__(self) -> None:
         super().__init__()
 
-        self.robot = robot
+        self.rgtMid = TalonFX(rgtMMotor)
+        self.rgtBack = TalonFX(rgtBMotor)
+        self.lftFront = TalonFX(lftFMotor)
+        self.lftMid = TalonFX(lftMMotor)
+        self.lftBack = TalonFX(lftBMotor)
 
-        motors = {}
-        pistons = {}
+        self.dShifter = 1   # DoubleSolenoid(wpilib.PneumaticsModuleType.CTREPCM, 4, 7)
 
-        self.map = self.robot.RobotMap
         self.rEnc = Encoder(0, 1, False, Encoder.EncodingType.k4X)
         self.lEnc = Encoder(2, 3, False, Encoder.EncodingType.k4X)
         self.Gyro = ADXRS450_Gyro
 
-        for name in self.map.motorMap.motors:
-            motors[name] = self.robot.Creator.createMotor(self.map.motorMap.motors[name])
-
-        for name in self.robot.RobotMap.PneumaticMap.pistons:
-            if name == 'dShifter':
-                pistons[name] = self.robot.Creator.createPistons(self.robot.RobotMap.PneumaticMap.pistons[name])
-        self.driveMotors = motors
-        self.dPistons = pistons
-
-        for name in self.driveMotors:
-            self.driveMotors[name].setInverted(self.robot.RobotMap.motorMap.motors[name]['inverted'])
-            self.driveMotors[name].setNeutralMode(ctre.NeutralMode.Coast)
-            if self.map.motorMap.motors[name]['CurLimit'] is True:
-                self.driveMotors[name].configStatorCurrentLimit(self.robot.Creator.CreateCurrentConfig(
-                    self.robot.RobotMap.currentConfig['Drive']), 40)
+        self.con = wpilib.XboxController(0)
+        self.side = wpilib.Joystick(1)
 
         self.kP = 0.0
         self.kI = 0.0
@@ -49,11 +40,15 @@ class Drive(SubsystemBase):
         wpilib.SmartDashboard.putNumber('lDrive', self.lEnc.get())
 
     def set(self, rgt, lft):
-        self.driveMotors['RFDrive'].set(ctre.ControlMode.PercentOutput, rgt)
-        self.driveMotors['LFDRIVE'].set(ctre.ControlMode.PercentOutput, lft)
+        self.rgtFront.set(ctre.ControlMode.PercentOutput, rgt)
+        self.rgtMid.set(ctre.ControlMode.PercentOutput, rgt)
+        self.rgtBack.set(ctre.ControlMode.PercentOutput, rgt)
+        self.lftFront.set(ctre.ControlMode.PercentOutput, lft)
+        self.lftMid.set(ctre.ControlMode.PercentOutput, lft)
+        self.lftBack.set(ctre.ControlMode.PercentOutput, lft)
 
     def setGearing(self, mode):
-        self.dPistons['dShifter'].set(mode)
+        self.dShifter.set(mode)
 
     def stop(self):
         self.set(0, 0)
@@ -62,6 +57,12 @@ class Drive(SubsystemBase):
         left = self.lEnc.get()
         right = self.rEnc.get()
         return (left + right) / 2
+
+    def getController(self):
+        return self.con
+
+    def getSideCon(self):
+        return self.side
 
     def getHeading(self):
         x = self.Gyro.getAngle()

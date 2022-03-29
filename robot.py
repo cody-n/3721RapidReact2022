@@ -4,11 +4,8 @@ from wpilib import SmartDashboard
 from commands2 import CommandScheduler
 from commands2 import RunCommand
 import commands2
-from robotMap import RobotMap
-from helper import Creator
 from commands.teleop import TeleOp
-from subsytems.drive import Drive
-from oi import OI
+from robotContainer import RobotContainer
 
 
 class compRobot(commands2.TimedCommandRobot):
@@ -16,20 +13,8 @@ class compRobot(commands2.TimedCommandRobot):
     autonomousCommand: typing.Optional[commands2.Command] = None
 
     def robotInit(self) -> None:
-
         # Initialize utility and subsystem classes
-        self.Creator = Creator
-        self.RobotMap = RobotMap(self)
-        self.oi = OI(self)
-        self.drive = Drive(self)
-        self.chooser = wpilib.SendableChooser()
-
-        # Initialize commands
-        self.teleop = TeleOp(self)
-
-    def getAutonomousCommand(self) -> commands2.Command:
-        # return chosen auto from chooser
-        return self.chooser.getSelected()
+        self.container = RobotContainer()
 
     def disabledInit(self) ->  None:
         """ This function is called once each time robot enters disabled mode"""
@@ -41,8 +26,7 @@ class compRobot(commands2.TimedCommandRobot):
         pass
 
     def autonomousInit(self):
-        self.autonomousCommand = self.getAutonomousCommand()
-
+        self.autonomousCommand = self.container.getAutonomousCommand()
         if self.autonomousCommand:
             self.autonomousCommand.schedule()
 
@@ -52,10 +36,10 @@ class compRobot(commands2.TimedCommandRobot):
     def teleopInit(self):
         if self.autonomousCommand:
             self.autonomousCommand.cancel()
-        self.teleop.schedule()
 
     def teleopPeriodic(self):
-        self.teleop.execute()
+        self.container.tele.execute()
+
 
     def testInit(self) -> None:
         commands2.CommandScheduler.getInstance().cancelAll()

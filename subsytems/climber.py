@@ -1,12 +1,12 @@
 import wpilib
 import ctre
-from wpilib.command import Subsystem
+from commands2 import SubsystemBase
 from wpilib import DigitalInput
 
 
-class Climber(Subsystem):
+class Climber(SubsystemBase):
     def __init__(self, robot):
-        Subsystem.__init__(robot, "Climber")
+        super().__init__()
 
         self.robot = robot
 

@@ -1,17 +1,17 @@
 import wpilib
 from commands2 import CommandBase
-
+from subsytems.drive import Drive
 
 class TeleOp(CommandBase):
-    def __init__(self, robot):
+    def __init__(self, drive: Drive):
         super().__init__()
 
-        self.robot = robot
-
-        self.controller = robot.oi.getMainController()
-        self.sideCon = robot.oi.getSideController()
+        self.drive = Drive
+        self.con = Drive.getController(self)
+        self.side = Drive.getSideCon(self)
 
     def execute(self):
+
         y = -self.controller.getY(self.controller.Hand.kLeftHand)
         x = -self.controller.getX(self.controller.Hand.kRightHand)
 
@@ -23,7 +23,8 @@ class TeleOp(CommandBase):
         if abs(lftArc) < 0.05:
             lftArc = 0
 
-        # self.robot.Drive.set(lftArc, rgtArc)
+        self.drive.set(rgtArc, lftArc)
+
 
     def isFinished(self):
         return False
