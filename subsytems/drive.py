@@ -11,23 +11,35 @@ from constants import *
 
 
 class Drive(SubsystemBase):
-    def __init__(self) -> None:
+    def __init__(self, robot) -> None:
         super().__init__()
 
-        self.rgtMid = TalonFX(rgtMMotor)
-        self.rgtBack = TalonFX(rgtBMotor)
-        self.lftFront = TalonFX(lftFMotor)
-        self.lftMid = TalonFX(lftMMotor)
-        self.lftBack = TalonFX(lftBMotor)
+        self.robot = robot
+        motors = {}
+        pistons = {}
 
-        self.dShifter = 1   # DoubleSolenoid(wpilib.PneumaticsModuleType.CTREPCM, 4, 7)
-
+        self.map = self.robot.botMap()
         self.rEnc = Encoder(0, 1, False, Encoder.EncodingType.k4X)
         self.lEnc = Encoder(2, 3, False, Encoder.EncodingType.k4X)
         self.Gyro = ADXRS450_Gyro
 
-        self.con = wpilib.XboxController(0)
-        self.side = wpilib.Joystick(1)
+        for name in self.map.motorMap.motors:
+            motors[name] = robot.Creator.createMotor(self.map.motorMap.motors[name])
+
+        for name in self.robot.botMap.PneumaticMap.pistons:
+            if name == 'Shifter':
+                pistons[name] = self.robot.Creator.createPistons(self.robot.botMap.PneumaticMap.pistons[name])
+
+        self.dMotors = motors
+        self.dPistons = pistons
+
+        for name in self.dMotors:
+            self.dMotors[name].setInverted(self.robot.botMap.motorMap.motors[name]['inverted'])
+            self.dMotors[name].setNeutralMode(ctre.NeutralMode.Coast)
+            if self.map.motorMap.motors[name]['CurLimit'] is True:
+                self.dMotors[name].configStatorCurrentLimit(self.robot.Creator.createCurrentConfig(
+                    self.robot.botMap.currentConfig['Drive']), 40)
+
 
         self.kP = 0.0
         self.kI = 0.0
@@ -40,12 +52,8 @@ class Drive(SubsystemBase):
         wpilib.SmartDashboard.putNumber('lDrive', self.lEnc.get())
 
     def set(self, rgt, lft):
-        self.rgtFront.set(ctre.ControlMode.PercentOutput, rgt)
-        self.rgtMid.set(ctre.ControlMode.PercentOutput, rgt)
-        self.rgtBack.set(ctre.ControlMode.PercentOutput, rgt)
-        self.lftFront.set(ctre.ControlMode.PercentOutput, lft)
-        self.lftMid.set(ctre.ControlMode.PercentOutput, lft)
-        self.lftBack.set(ctre.ControlMode.PercentOutput, lft)
+        self.dMotors['RFDrive'].set(ctre.ControlMode.PercentOutput, rgt)
+        self.dMotors['LFDrive'].set(ctre.ControlMode.PercentOutput, lft)
 
     def setGearing(self, mode):
         self.dShifter.set(mode)

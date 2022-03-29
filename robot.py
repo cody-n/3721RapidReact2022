@@ -6,6 +6,10 @@ from commands2 import RunCommand
 import commands2
 from commands.teleop import TeleOp
 from robotContainer import RobotContainer
+from oi import OI
+from helper import Creator
+from robotMap import RobotMap
+from subsytems.drive import Drive
 
 
 class compRobot(commands2.TimedCommandRobot):
@@ -14,7 +18,17 @@ class compRobot(commands2.TimedCommandRobot):
 
     def robotInit(self) -> None:
         # Initialize utility and subsystem classes
-        self.container = RobotContainer()
+        self.Creator = Creator()
+        self.botMap = RobotMap(self)
+        self.oi = OI(self)
+
+        self.teleOp = TeleOp(self)
+
+        self.Drive = Drive(self)
+
+
+
+
 
     def disabledInit(self) ->  None:
         """ This function is called once each time robot enters disabled mode"""
