@@ -9,6 +9,7 @@ from wpilib import Joystick
 from wpilib import XboxController
 from wpilib import DoubleSolenoid
 from wpilib import Solenoid
+from wpilib import PneumaticsModuleType
 import ctre
 
 
@@ -47,39 +48,44 @@ class Creator:
             else:
                 print("IDK UR motor")
 
+        return motr
+
     def createPWMMotor(self, MotorSpec):
         if MotorSpec['Type'] == 'VictorSP':
             motr = VictorSP(MotorSpec['port'])
             motr.setInverted(MotorSpec['inverted'])
-            return motr
         else:
             print("IDK UR motor")
 
+        return motr
+
     def createCurrentConfig(self, configSpec):
         config = StatorCurrentLimitConfiguration(configSpec['state'], configSpec['currentLimit'],
-                                                configSpec['triggerThresh'], configSpec['time'])
+                                                 configSpec['triggerThresh'], configSpec['time'])
         return config
 
     def createPistons(self, pistonSpec):
         piston = None
         if pistonSpec['Type'] == 'Double':
-            piston = DoubleSolenoid(pistonSpec['portA'], pistonSpec['portB'])
+            piston = DoubleSolenoid(PneumaticsModuleType.CTREPCM, pistonSpec['portA'], pistonSpec['portB'])
         elif pistonSpec['Type'] == 'Single':
-            piston = Solenoid(pistonSpec['portA'])
+            piston = Solenoid(PneumaticsModuleType.CTREPCM, pistonSpec['portA'])
         else:
             print("IDK UR piston bozo")
 
+        return piston
+
     def createControllers(self, ConSpec):
         con = None
-        if ConSpec['jobType'] == 'main':
-            if ConSpec['Type'] == 'xbox':
-                con = XboxController(ConSpec['Id'])
-            elif ConSpec['Type'] == 'xtreme':
-                con = Joystick(ConSpec['Id'])
-            elif ConSpec['Type'] == 'gameCube':
-                con = Joystick(ConSpec['Id'])
-            else:
-                print("IDK UR Controller Bozo")
+
+        if ConSpec['Type'] == 'xbox':
+            con = XboxController(ConSpec['Id'])
+        elif ConSpec['Type'] == 'xtreme':
+            con = Joystick(ConSpec['Id'])
+        elif ConSpec['Type'] == 'gameCube':
+            con = Joystick(ConSpec['Id'])
+        elif ConSpec['Type'] == 'custom':
+            con = Joystick(ConSpec['Id'])
         else:
             print("IDK UR Controller Bozo")
 

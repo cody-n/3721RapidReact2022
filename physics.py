@@ -21,6 +21,9 @@ class PhysicsEngine:
         self.physController = physics_controller
         self.bumperw = 3.25 * units.inch
 
+        self.lf_motor = wpilib.simulation.PWMSim(robot.botMap.motorMap.motors['LFDrive']['port'])      # new system dont use hal
+        self.rf_motor = wpilib.simulation.PWMSim(robot.botMap.motorMap.motors['RFDrive']['port'])
+
         self.drivetrain = tankmodel.TankModel.theory(
             motor_cfgs.MOTOR_CFG_FALCON_500,    # motor type
             115 * units.lbs,                    # mass
@@ -31,6 +34,18 @@ class PhysicsEngine:
             6 * units.inch,                     # wheel diameter
         )
 
-    def update_sim(self, hal_data, now, tm_dif):
-        lf_motor = -hal_data['CAN'][0]['value']
-        rf_motor = hal_data['CAN'][3]['value']
+        # self.gyro = ADXRS450_GyroSim()
+
+
+    def update_sim(self, now, tm_diff):
+        # Simulate the drivetrain (only front motors used because read should be in sync)
+        lf_motor = self.lf_motor.getSpeed()
+        rf_motor = self.rf_motor.getSpeed()
+
+        transform = self.drivetrain.calculate(lf_motor, rf_motor, tm_diff)
+        pose = self.physController.move_robot(transform)
+
+        # Update the gyro simulation
+        # -> FRC gyros are positive clockwise, but the returned pose is positive
+        #    counter-clockwise
+        # self.gyro.setAngle(-pose.rotation().degrees())

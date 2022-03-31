@@ -35,7 +35,7 @@ class Drive(SubsystemBase):
             self.driveMotors[name].setInverted(self.robot.botMap.motorMap.motors[name]['inverted'])
             self.driveMotors[name].setNeutralMode(ctre.NeutralMode.Coast)
             if self.map.motorMap.motors[name]['CurLimit'] is True:
-                self.driveMotors[name].configStatorCurrentLimit(self.robot.Creator.CreateCurrentConfig(
+                self.driveMotors[name].configStatorCurrentLimit(self.robot.Creator.createCurrentConfig(
                     self.robot.botMap.currentConfig['Drive']), 40)
 
         self.kP = 0.0

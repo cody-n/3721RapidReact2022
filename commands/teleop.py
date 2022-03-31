@@ -12,8 +12,8 @@ class TeleOp(CommandBase):
         self.sideCon = robot.oi.getSideController()
 
     def execute(self):
-        y = -self.controller.getY(self.controller.Hand.kLeftHand)
-        x = -self.controller.getX(self.controller.Hand.kRightHand)
+        y = -self.controller.getLeftY()
+        x = -self.controller.getRightX()
 
         rgtArc = y - x
         lftArc = y + x

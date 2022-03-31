@@ -8,6 +8,21 @@ class RobotMap:
         self.PneumaticMap = PneumaticMap()
         self.ControlMap = ControlMap()
 
+        # add this!
+        self.currentConfig = {
+            'Fly': {
+                'state': True,
+                'currentLimit': 25,
+                'triggerThresh': 35,
+                'time': 0.5
+            },
+            'Drive': {
+                'state': True,
+                'currentLimit': 35,
+                'triggerThresh': 40,
+                'time': 0.5
+            }}
+
 
 class MotorMap:
     def __init__(self):
@@ -17,6 +32,7 @@ class MotorMap:
         """
         Drive
         """
+        # make sure motors have master ports filled
         self.motors['RFDrive'] = {
             'port': 0,
             'inverted': True,
@@ -29,6 +45,7 @@ class MotorMap:
             'port': 2,
             'inverted': True,
             'jobType': 'slave',
+            'masterPort': 0,
             'ContType': 'CAN',
             'Type': 'TalonFX',
             'CurLimit': True}
@@ -37,6 +54,7 @@ class MotorMap:
             'port': 1,
             'inverted': True,
             'jobType': 'slave',
+            'masterPort': 0,
             'ContType': 'CAN',
             'Type': 'TalonFX',
             'CurLimit': True}
@@ -53,6 +71,7 @@ class MotorMap:
             'port': 4,
             'inverted': False,
             'jobType': 'slave',
+            'masterPort': 5,
             'ContType': 'CAN',
             'Type': 'TalonFX',
             'CurLimit': True}
@@ -61,6 +80,7 @@ class MotorMap:
             'port': 3,
             'inverted': False,
             'jobType': 'slave',
+            'masterPort': 5,
             'ContType': 'CAN',
             'Type': 'TalonFX',
             'CurLimit': True}
@@ -80,6 +100,7 @@ class MotorMap:
             'port': 7,
             'inverted': True,
             'jobType': 'slave',
+            'masterPort': 6,
             'ContType': 'CAN',
             'Type': 'TalonFX',
             'CurLimit': True}
@@ -115,7 +136,7 @@ class PneumaticMap:
         """
         Drive Pistons
         """
-        self.pistons['dShifter'] = {'portA': 4, 'portB': 7, 'Type': 'Double'}
+        self.pistons['dShifter'] = {'portA': 4, 'portB': 7, 'moduleType': 'ctre','Type': 'Double'}      # add module type
 
         """
         Climber Pistons
@@ -133,4 +154,4 @@ class ControlMap:
         self.Controller = {}
 
         self.Controller['xbox'] = {'Id': 0, 'Type': 'xbox', 'jobType': 'main'}
-        self.Controller['board'] = {'Id': 1, 'Type': 'custom', 'jobType:': 'side'}
+        self.Controller['board'] = {'Id': 1, 'Type': 'custom', 'jobType': 'side'}   # change name here

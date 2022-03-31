@@ -4,6 +4,8 @@ from wpilib import SmartDashboard
 from commands2 import CommandScheduler
 from commands2 import RunCommand
 import commands2
+
+import robotMap
 from robotMap import RobotMap
 from helper import Creator
 from commands.teleop import TeleOp
@@ -18,7 +20,7 @@ class compRobot(commands2.TimedCommandRobot):
     def robotInit(self) -> None:
 
         # Initialize utility and subsystem classes
-        self.Creator = Creator
+        self.Creator = Creator()
         self.botMap = RobotMap(self)
         self.oi = OI(self)
         self.drive = Drive(self)
